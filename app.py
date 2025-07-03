@@ -290,6 +290,43 @@ def obter_resposta(texto: str) -> str:
         return f'O seu número é {min}'
     
 
+    def resposta_recomendacao_filmes() -> str:
+        '''
+        Recomenda filmes usando a API do TMDB.
+        fonte: https://developer.themoviedb.org/reference/intro/getting-started
+        '''
+        apikey = "5534120401107e1e58645bb7090ef0bf"
+
+        opcoes = {
+            '1': ('Populares', f"https://api.themoviedb.org/3/movie/popular?api_key={apikey}&language=pt-PT&page=1"),
+            '2': ('Melhor avaliados', f"https://api.themoviedb.org/3/movie/top_rated?api_key={apikey}&language=pt-PT&page=1")
+        }
+
+        def menu_filmes():
+            print("Escolha o tipo de recomendação:")
+            for k, (nome, _) in opcoes.items():
+                print(f"{k} - {nome}")
+            escolha = input("Digite o número da opção: ")
+            return escolha if escolha in opcoes else None
+
+        def obter_filmes(tipo, *_):
+            if tipo not in opcoes:
+                raise ValueError("Opção inválida")
+            url = opcoes[tipo][1]
+            resposta = url_request(url)
+            data = json.loads(resposta)
+            filmes = data.get('results', [])
+            return filmes[:10]
+
+        def formatar(modo, valores, filmes):
+            if not filmes:
+                return "Não foi possível obter recomendações no momento."
+            lista = [f"{i+1}. {filme['title']} ({filme.get('release_date', 's/ data')[:4]})" for i, filme in enumerate(filmes)]
+            return "Sugestões de 10 filmes:\n" + "\n".join(lista)
+
+        return fluxo_interativo(menu_filmes, [], obter_filmes, formatar)
+    
+
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
          'como estás': 'Estou bem, obrigado!',
@@ -302,6 +339,7 @@ def obter_resposta(texto: str) -> str:
          ('cotação', 'ação', 'ações', 'stock', 'preço ação'): reposta_obter_cotacao_acao,
          ('converte', 'moeda', 'câmbio', 'cambio'): resposta_conversao_moeda,
          ('jogo', 'adivinhar') : adivinhador,
+         ('recomendação filmes','filmes', 'top filmes') : resposta_recomendacao_filmes,
 
      }
     
