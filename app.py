@@ -111,6 +111,21 @@ def obter_resposta(texto: str) -> str:
         except ZeroDivisionError:
             print('Impossível dividir por zero!')
 
+    def fluxo_interativo(menu_func, input_msgs, calc_func, format_func):
+        try:
+            modo = menu_func()
+            if modo is None:
+                raise ValueError
+            valores = []
+            for msg in input_msgs:
+                valores.append(float(input(msg)))
+            resultado = calc_func(modo, *valores)
+            return format_func(modo, valores, resultado)
+        except ValueError:
+            return 'Dados inválidos!'
+        except ZeroDivisionError:
+            return 'Impossível dividir por zero!'
+
     def resposta_conversao_temperatura() -> str:
         '''
         Conversão de temperaturas (Celsius e Fahrenheit).
@@ -139,19 +154,15 @@ def obter_resposta(texto: str) -> str:
             elif modo == F_PARA_C:
                 return calculadora(calculadora(calculadora(valor, 32, '-'), 5, '*'), 9, '/')
 
-
-        try:
-            modo = modo_conversao()
-            if modo is None:
-                raise ValueError 
-            temp = float(input("Valor da temperatura para conversão: "))
-            resultado = conversao(modo, temp)
+        def formatar(modo, valores, resultado):
+            temp = valores[0]
             if modo == C_PARA_F:
                 return f'{temp}°C equivalem a {resultado:.2f}°F'
             else:
                 return f'{temp}°F equivalem a {resultado:.2f}°C'
-        except ValueError:
-            return 'Dados inválidos!'
+     
+
+        return fluxo_interativo(modo_conversao, ["Valor da temperatura para conversão: "], conversao, formatar)
 
     def resposta_conversao_peso() -> str:
         '''
@@ -179,19 +190,16 @@ def obter_resposta(texto: str) -> str:
             # 1 lb = 0.453592 kg
             elif modo == LB_PARA_KG:
                 return calculadora(valor, 0.453592, '*')
+            
 
-        try:
-            modo = modo_conversao()
-            if modo is None:
-                raise ValueError
-            peso = float(input("Valor do peso para conversão: "))
-            resultado = conversao(modo, peso)
+        def formatar(modo, valores, resultado):
+            temp = valores[0]
             if modo == KG_PARA_LB:
-                return f'{peso} kg equivalem a {resultado:.2f} lb'
+                return f'{temp} kg equivalem a {resultado:.2f} lb'
             else:
-                return f'{peso} lb equivalem a {resultado:.2f} kg'
-        except ValueError:
-            return 'Dados inválidos!'
+                return f'{temp} lb equivalem a {resultado:.2f} kg'
+
+        return fluxo_interativo(modo_conversao, ["Valor do peso para conversão: "],conversao, formatar)
 
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
