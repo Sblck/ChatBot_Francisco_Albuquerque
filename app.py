@@ -202,9 +202,9 @@ def obter_resposta(texto: str) -> str:
          ('bye', 'adeus', 'tchau'): 'Gostei de falar contigo! Até breve...',
          ('minha localização', 'onde estou'): resposta_localizacao,
          ('tempo', 'metereologia'): resposta_metereologia,
-         ('calcular','calculadora') : resposta_calculadora,
+         ('calcular', 'calculadora', 'somar', 'subtrair', 'multiplicar', 'dividir') : resposta_calculadora,
          ('converte', 'temperatura') : resposta_conversao_temperatura,
-         ('converte', 'peso') : resposta_conversao_peso
+         ('peso') : resposta_conversao_peso
 
      }
     
