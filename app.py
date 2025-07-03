@@ -46,36 +46,35 @@ def obter_resposta(texto: str) -> str:
 
     def resposta_metereologia() -> str:
         return f'{obter_metereologia()}'
-    
-    
+
+    def calculadora(num1: float, num2: float, operador: str) -> float:
+        """
+        Usar nan como valor inicial é uma boa prática. 
+        Se o operador fornecido não corresponder a nenhuma das opções válidas (+, -, etc.), a função retornará nan, 
+        sinalizando que o cálculo não pôde ser realizado.
+        """
+        result = float("nan")
+        if operador == '+':
+            result = num1 + num2
+        elif operador == '-':
+            result = num1 - num2
+        elif operador == '*':
+            result = num1 * num2
+        elif operador == '/':
+            if num2 == 0:
+                raise ZeroDivisionError
+            result = num1 / num2
+        elif operador == '^':
+            result = num1 ** num2
+        return result
+
     def resposta_calculadora() -> str:
         '''
         Calcular várias operações entre dois numeros por input do utilizador
         Suporta soma, subtração, multiplicação, divisão e exponenciação
         Fork: https://github.com/Sblck/Calculadora
         Repo Original: https://github.com/cbarata-formador/Calculadora
-
         '''
-        def calculadora(num1: float, num2: float, operador: str) -> float:
-            """
-            Usar nan como valor inicial é uma boa prática. 
-            Se o operador fornecido não corresponder a nenhuma das opções válidas (+, -, etc.), a função retornará nan, 
-            sinalizando que o cálculo não pôde ser realizado.
-            """
-            result = float("nan")
-            if operador == '+':
-                result = num1 + num2
-            elif operador == '-':
-                result = num1 - num2
-            elif operador == '*':
-                result = num1 * num2
-            elif operador == '/':
-                if num2 == 0:
-                    raise ZeroDivisionError
-                result = num1 / num2
-            elif operador == '^':
-                result = num1 ** num2
-            return result
 
         def menu_operacoes() -> str:
             print('Escolha a operação:')
@@ -112,15 +111,64 @@ def obter_resposta(texto: str) -> str:
         except ZeroDivisionError:
             print('Impossível dividir por zero! -> Tente novamente!')
 
+    def resposta_conversao_temperatura() -> str:
+        '''
+        Conversão de temperaturas (Celsius e Fahrenheit).
+        '''
+        C_PARA_F = 1
+        F_PARA_C = 2
+
+        def modo_conversao() -> int:
+            print('Escolha o tipo de conversão:')
+            print(f'{C_PARA_F} - Celsius para Fahrenheit')
+            print(f'{F_PARA_C} - Fahrenheit para Celsius')
+            opcao = input(f'Digite {C_PARA_F} ou {F_PARA_C}: ')
+            if opcao == str(C_PARA_F):
+                return C_PARA_F
+            elif opcao == str(F_PARA_C):
+                return F_PARA_C
+            else:
+                return None
+ 
+ 
+        def conversao(modo: int, valor: float) -> float:
+            # C para F -> (valor * 9 / 5) + 32
+            if modo == C_PARA_F:
+                return calculadora(calculadora(calculadora(valor, 9, '*'), 5, '/'), 32, '+')
+            # F para C -> (valor - 32) * 5 / 9
+            elif modo == F_PARA_C:
+                return calculadora(calculadora(calculadora(valor, 32, '-'), 5, '*'), 9, '/')
+
+
+        try:
+            modo = modo_conversao()
+            if modo is None:
+                raise ValueError 
+            temp = float(input("Valor da temperatura para conversão: "))
+            resultado = conversao(modo, temp)
+            if modo == C_PARA_F:
+                return f'{temp}°C equivalem a {resultado:.2f}°F'
+            else:
+                return f'{temp}°F equivalem a {resultado:.2f}°C'
+        except ValueError:
+            return 'Dados inválidos! -> Tente novamente!'
+
+    def resposta_conversao_peso() -> str:
+        return
+
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
          'como estás': 'Estou bem, obrigado!',
          ('bye', 'adeus', 'tchau'): 'Gostei de falar contigo! Até breve...',
          ('minha localização', 'onde estou'): resposta_localizacao,
          ('tempo', 'metereologia'): resposta_metereologia,
-         ('calcular', 'calculadora') : resposta_calculadora
+         ('calculadora') : resposta_calculadora,
+         ('converte', 'temperatura') : resposta_conversao_temperatura,
+         ('converte', 'peso') : resposta_conversao_peso
 
      }
+    
+    # TODO - Acrescentar pelo menos 10 novas interações que o chatbot possa responder e testá-las
     
     def processar_resposta(resposta):
         return resposta() if callable(resposta) else resposta
