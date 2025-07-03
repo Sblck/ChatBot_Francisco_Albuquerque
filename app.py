@@ -196,6 +196,11 @@ def obter_resposta(texto: str) -> str:
 
         return fluxo_interativo(modo_conversao, ["Valor do peso para conversão: "],conversao, formatar)
 
+
+    def reposta_obter_cotacao_acao() -> str:
+        return
+    
+    
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
          'como estás': 'Estou bem, obrigado!',
@@ -204,7 +209,8 @@ def obter_resposta(texto: str) -> str:
          ('tempo', 'metereologia'): resposta_metereologia,
          ('calcular', 'calculadora', 'somar', 'subtrair', 'multiplicar', 'dividir') : resposta_calculadora,
          ('converte', 'temperatura') : resposta_conversao_temperatura,
-         ('peso') : resposta_conversao_peso
+         ('peso') : resposta_conversao_peso,
+         ('cotação', 'ação', 'ações', 'stock', 'preço ação'): reposta_obter_cotacao_acao,
 
      }
     
