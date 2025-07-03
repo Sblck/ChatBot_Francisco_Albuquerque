@@ -198,8 +198,23 @@ def obter_resposta(texto: str) -> str:
 
 
     def reposta_obter_cotacao_acao() -> str:
-        return
-    
+        simbolo = input("Digite o símbolo da ação (ex: AAPL, MSFT, TSLA): ").upper()
+        url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={simbolo}"
+        try:
+            resposta = url_request(url)
+            data = json.loads(resposta)
+            resultado = data['quoteResponse']['result']
+            if not resultado:
+                return f"Não encontrei cotação para o símbolo '{simbolo}'."
+            preco = resultado[0].get('regularMarketPrice')
+            nome = resultado[0].get('shortName', simbolo)
+            if preco is not None:
+                return f"A cotação atual de {nome} ({simbolo}) é ${preco}"
+            else:
+                return f"Não foi possível obter o preço para '{simbolo}'."
+        except Exception as e:
+            return f"Erro ao obter cotação: {e}"
+
     
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
