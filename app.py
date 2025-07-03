@@ -43,9 +43,74 @@ def obter_resposta(texto: str) -> str:
     def resposta_localizacao() -> str:
         return f'{descompactar(obter_localizacao_via_ip(), "Estás na cidade de {} em {}")}'
     
-    
+
     def resposta_metereologia() -> str:
         return f'{obter_metereologia()}'
+    
+    
+    def resposta_calculadora() -> str:
+        '''
+        Calcular várias operações entre dois numeros por input do utilizador
+        Suporta soma, subtração, multiplicação, divisão e exponenciação
+        Fork: https://github.com/Sblck/Calculadora
+        Repo Original: https://github.com/cbarata-formador/Calculadora
+
+        '''
+        def calculadora(num1: float, num2: float, operador: str) -> float:
+            """
+            Usar nan como valor inicial é uma boa prática. 
+            Se o operador fornecido não corresponder a nenhuma das opções válidas (+, -, etc.), a função retornará nan, 
+            sinalizando que o cálculo não pôde ser realizado.
+            """
+            result = float("nan")
+            if operador == '+':
+                result = num1 + num2
+            elif operador == '-':
+                result = num1 - num2
+            elif operador == '*':
+                result = num1 * num2
+            elif operador == '/':
+                if num2 == 0:
+                    raise ZeroDivisionError
+                result = num1 / num2
+            elif operador == '^':
+                result = num1 ** num2
+            return result
+
+        def menu_operacoes() -> str:
+            print('Escolha a operação:')
+            print('1 - Soma (+)')
+            print('2 - Subtração (-)')
+            print('3 - Multiplicação (*)')
+            print('4 - Divisão (/)')
+            print('5 - Exponenciação (^)')
+            opcao = input('Digite o número da operação desejada: ')
+            if opcao == '1':
+                return '+'
+            elif opcao == '2':
+                return '-'
+            elif opcao == '3':
+                return '*'
+            elif opcao == '4':
+                return '/'
+            elif opcao == '5':
+                return '^'
+            else:
+                return None
+
+        try:
+            operador = menu_operacoes()
+            if operador is None:
+                return 'Opção inválida!'
+            num1 = float(input('Digite o primeiro número: '))
+            num2 = float(input('Digite o segundo número: '))
+            resultado = calculadora(num1, num2, operador)
+            return f' {num1} {operador} {num2} = {resultado}'
+
+        except ValueError:
+            print('Dados inválidos! -> Tente novamente!')
+        except ZeroDivisionError:
+            print('Impossível dividir por zero! -> Tente novamente!')
 
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
@@ -53,6 +118,8 @@ def obter_resposta(texto: str) -> str:
          ('bye', 'adeus', 'tchau'): 'Gostei de falar contigo! Até breve...',
          ('minha localização', 'onde estou'): resposta_localizacao,
          ('tempo', 'metereologia'): resposta_metereologia,
+         ('calcular', 'calculadora') : resposta_calculadora
+
      }
     
     def processar_resposta(resposta):
