@@ -359,7 +359,7 @@ def obter_resposta(texto: str) -> str:
             r, g, b = nomes_cores[entrada]
         else:
             return "Cor não reconhecida. Tente nomes básicos ou RGB."
-        
+
         def rgb_para_hsl(r, g, b):
             r, g, b = [x / 255.0 for x in (r, g, b)]
             mx = max(r, g, b)
@@ -378,12 +378,33 @@ def obter_resposta(texto: str) -> str:
                     h = (r - g) / d + 4
                 h /= 6
             return round(h * 360), round(s * 100), round(l * 100)
-        
-        
-        resultado = nomes_cores_inv.get((r,g,b))
-        return f"A cor é : {resultado} :"
+
+        def hsl_para_rgb(h, s, l):
+            h = h / 360
+            s = s / 100
+            l = l / 100
+            def f(n):
+                k = (n + h * 12) % 12
+                a = s * min(l, 1 - l)
+                c = l - a * max(min(k - 3, 9 - k, 1), -1)
+                return int(round(c * 255))
+            return f(0), f(8), f(4)
 
 
+        cor_escolhida = nomes_cores_inv.get((r, g, b), "(sem nome)")
+        # Complementar
+        # RGB -> HSL -> Transformaçao -> RGB
+        h, s, l = rgb_para_hsl(r, g, b)
+        if s == 0:
+            l_comp = 100 - l
+            r_comp, g_comp, b_comp = hsl_para_rgb(h, s, l_comp)
+        else:
+            h_comp = (h + 180) % 360
+            r_comp, g_comp, b_comp = hsl_para_rgb(h_comp, s, l)
+
+        resultado = nomes_cores_inv.get((r_comp, g_comp, b_comp), "(sem nome)")
+
+        return f"A cor complementar a {cor_escolhida} ({r},{g},{b}) é {resultado} ({r_comp},{g_comp},{b_comp})\n"
 
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
