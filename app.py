@@ -215,6 +215,23 @@ def obter_resposta(texto: str) -> str:
         except Exception as e:
             return f"Erro ao obter cotação: {e}"
 
+    def adivinhador() -> str:
+        contador = 0
+        min = 1
+        max = 100
+        print('==== Adivinhador ====')
+        print(f'Pense num número entre {min} e {max}')
+
+        while contador < 7 and min < max:
+            valor = (min + max) // 2
+            resposta = input(f'O seu número é maior que {valor}? (s/n): ').strip().lower()
+            if resposta in ('sim', 's'):
+                min = valor + 1
+            else:
+                max = valor
+            contador += 1
+
+        return f'O seu número é {min}'
     
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
@@ -226,6 +243,7 @@ def obter_resposta(texto: str) -> str:
          ('converte', 'temperatura') : resposta_conversao_temperatura,
          ('peso') : resposta_conversao_peso,
          ('cotação', 'ação', 'ações', 'stock', 'preço ação'): reposta_obter_cotacao_acao,
+         ('jogo', 'adivinhar') : adivinhador,
 
      }
     
