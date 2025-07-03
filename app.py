@@ -46,6 +46,21 @@ def obter_resposta(texto: str) -> str:
 
     def resposta_metereologia() -> str:
         return f'{obter_metereologia()}'
+    
+    def fluxo_interativo(menu_func, input_msgs, calc_func, format_func):
+        try:
+            modo = menu_func()
+            if modo is None:
+                raise ValueError
+            valores = []
+            for msg in input_msgs:
+                valores.append(float(input(msg)))
+            resultado = calc_func(modo, *valores)
+            return format_func(modo, valores, resultado)
+        except ValueError:
+            return 'Dados inválidos!'
+        except ZeroDivisionError:
+            return 'Impossível dividir por zero!'
 
     def calculadora(num1: float, num2: float, operador: str) -> float:
         """
@@ -97,34 +112,14 @@ def obter_resposta(texto: str) -> str:
             else:
                 return None
 
-        try:
-            operador = menu_operacoes()
-            if operador is None:
-                raise ValueError
-            num1 = float(input('Digite o primeiro número: '))
-            num2 = float(input('Digite o segundo número: '))
-            resultado = calculadora(num1, num2, operador)
-            return f' {num1} {operador} {num2} = {resultado}'
+        def calc(operador, num1, num2):
+            return calculadora(num1, num2, operador)
 
-        except ValueError:
-            print('Dados inválidos!')
-        except ZeroDivisionError:
-            print('Impossível dividir por zero!')
+        def formatar(operador, valores, resultado):
+            num1, num2 = valores
+            return f'{num1} {operador} {num2} = {resultado}'
 
-    def fluxo_interativo(menu_func, input_msgs, calc_func, format_func):
-        try:
-            modo = menu_func()
-            if modo is None:
-                raise ValueError
-            valores = []
-            for msg in input_msgs:
-                valores.append(float(input(msg)))
-            resultado = calc_func(modo, *valores)
-            return format_func(modo, valores, resultado)
-        except ValueError:
-            return 'Dados inválidos!'
-        except ZeroDivisionError:
-            return 'Impossível dividir por zero!'
+        return fluxo_interativo(menu_operacoes, ['Digite o primeiro número: ', 'Digite o segundo número: '], calc, formatar)
 
     def resposta_conversao_temperatura() -> str:
         '''
@@ -207,7 +202,7 @@ def obter_resposta(texto: str) -> str:
          ('bye', 'adeus', 'tchau'): 'Gostei de falar contigo! Até breve...',
          ('minha localização', 'onde estou'): resposta_localizacao,
          ('tempo', 'metereologia'): resposta_metereologia,
-         ('calculadora') : resposta_calculadora,
+         ('calcular','calculadora') : resposta_calculadora,
          ('converte', 'temperatura') : resposta_conversao_temperatura,
          ('converte', 'peso') : resposta_conversao_peso
 
