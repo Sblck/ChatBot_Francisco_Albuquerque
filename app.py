@@ -348,6 +348,18 @@ def obter_resposta(texto: str) -> str:
         }
         nomes_cores_inv = {v: k for k, v in nomes_cores.items()}
 
+        entrada = input("Digite uma cor (nome ou RGB, ex: 255,0,0): ").strip().lower()
+        if ',' in entrada:
+            try:
+                r, g, b = [int(x) for x in entrada.split(',')]
+            except Exception:
+                return "Formato inválido! Use: 255,0,0 para RGB"
+        elif entrada in nomes_cores:
+            r, g, b = nomes_cores[entrada]
+        else:
+            return "Cor não reconhecida. Tente nomes básicos ou RGB."
+        resultado = nomes_cores_inv.get((r,g,b))
+        return f"A cor é : {resultado}"
 
 
 
