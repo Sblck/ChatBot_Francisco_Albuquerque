@@ -331,6 +331,7 @@ def obter_resposta(texto: str) -> str:
         '''
         Cor complementar/oposta de uma cor dada pelo utilizador.
         Aceita entrada em RGB (255,0,0) ou nome (vermelho).
+        Usa a conversão para o espaço HSL (hue,saturation,luminosity)
         '''
 
         # TODO - Rever range de cada "cor", clamp 
@@ -358,8 +359,29 @@ def obter_resposta(texto: str) -> str:
             r, g, b = nomes_cores[entrada]
         else:
             return "Cor não reconhecida. Tente nomes básicos ou RGB."
+        
+        def rgb_para_hsl(r, g, b):
+            r, g, b = [x / 255.0 for x in (r, g, b)]
+            mx = max(r, g, b)
+            mn = min(r, g, b)
+            l = (mx + mn) / 2
+            if mx == mn:
+                h = s = 0
+            else:
+                d = mx - mn
+                s = d / (2 - mx - mn) if l > 0.5 else d / (mx + mn)
+                if mx == r:
+                    h = (g - b) / d + (6 if g < b else 0)
+                elif mx == g:
+                    h = (b - r) / d + 2
+                else:
+                    h = (r - g) / d + 4
+                h /= 6
+            return round(h * 360), round(s * 100), round(l * 100)
+        
+        
         resultado = nomes_cores_inv.get((r,g,b))
-        return f"A cor é : {resultado}"
+        return f"A cor é : {resultado} :"
 
 
 
