@@ -327,6 +327,30 @@ def obter_resposta(texto: str) -> str:
         return fluxo_interativo(menu_filmes, [], obter_filmes, formatar)
     
 
+    def resposta_cores() -> str:
+        '''
+        Cor complementar/oposta de uma cor dada pelo utilizador.
+        Aceita entrada em RGB (255,0,0) ou nome (vermelho).
+        '''
+
+        # TODO - Rever range de cada "cor", clamp 
+        nomes_cores = {
+            'vermelho': (255, 0, 0),
+            'verde': (0, 255, 0),
+            'azul': (0, 0, 255),
+            'amarelo': (255, 255, 0),
+            'ciano': (0, 255, 255),
+            'magenta': (255, 0, 255),
+            'preto': (0, 0, 0),
+            'branco': (255, 255, 255),
+            'laranja': (255, 165, 0),
+            'roxo': (128, 0, 128)
+        }
+        nomes_cores_inv = {v: k for k, v in nomes_cores.items()}
+
+
+
+
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
          'como estás': 'Estou bem, obrigado!',
@@ -334,6 +358,7 @@ def obter_resposta(texto: str) -> str:
          ('minha localização', 'onde estou'): resposta_localizacao,
          ('tempo', 'metereologia'): resposta_metereologia,
          ('calcular', 'calculadora', 'somar', 'subtrair', 'multiplicar', 'dividir') : resposta_calculadora,
+         ('cores','complementa') : resposta_cores,
          ('converte', 'temperatura') : resposta_conversao_temperatura,
          ('peso') : resposta_conversao_peso,
          ('cotação', 'ação', 'ações', 'stock', 'preço ação'): reposta_obter_cotacao_acao,
