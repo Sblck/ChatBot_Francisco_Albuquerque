@@ -100,16 +100,16 @@ def obter_resposta(texto: str) -> str:
         try:
             operador = menu_operacoes()
             if operador is None:
-                return 'Opção inválida!'
+                raise ValueError
             num1 = float(input('Digite o primeiro número: '))
             num2 = float(input('Digite o segundo número: '))
             resultado = calculadora(num1, num2, operador)
             return f' {num1} {operador} {num2} = {resultado}'
 
         except ValueError:
-            print('Dados inválidos! -> Tente novamente!')
+            print('Dados inválidos!')
         except ZeroDivisionError:
-            print('Impossível dividir por zero! -> Tente novamente!')
+            print('Impossível dividir por zero!')
 
     def resposta_conversao_temperatura() -> str:
         '''
@@ -151,10 +151,47 @@ def obter_resposta(texto: str) -> str:
             else:
                 return f'{temp}°F equivalem a {resultado:.2f}°C'
         except ValueError:
-            return 'Dados inválidos! -> Tente novamente!'
+            return 'Dados inválidos!'
 
     def resposta_conversao_peso() -> str:
-        return
+        '''
+        Conversão de peso entre quilogramas (kg) e libras (lb).
+        '''
+        KG_PARA_LB = 1
+        LB_PARA_KG = 2
+
+        def modo_conversao() -> int:
+            print('Escolha o tipo de conversão:')
+            print(f'{KG_PARA_LB} - Quilogramas para Libras')
+            print(f'{LB_PARA_KG} - Libras para Quilogramas')
+            opcao = input(f'Digite {KG_PARA_LB} ou {LB_PARA_KG}: ')
+            if opcao == str(KG_PARA_LB):
+                return KG_PARA_LB
+            elif opcao == str(LB_PARA_KG):
+                return LB_PARA_KG
+            else:
+                return None
+
+        def conversao(modo: int, valor: float) -> float:
+            # 1 kg = 2.20462 lb
+            if modo == KG_PARA_LB:
+                return calculadora(valor, 2.20462, '*')
+            # 1 lb = 0.453592 kg
+            elif modo == LB_PARA_KG:
+                return calculadora(valor, 0.453592, '*')
+
+        try:
+            modo = modo_conversao()
+            if modo is None:
+                raise ValueError
+            peso = float(input("Valor do peso para conversão: "))
+            resultado = conversao(modo, peso)
+            if modo == KG_PARA_LB:
+                return f'{peso} kg equivalem a {resultado:.2f} lb'
+            else:
+                return f'{peso} lb equivalem a {resultado:.2f} kg'
+        except ValueError:
+            return 'Dados inválidos!'
 
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
