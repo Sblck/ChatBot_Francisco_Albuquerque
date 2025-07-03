@@ -15,6 +15,7 @@ def obter_resposta(texto: str) -> str:
         try:
             url: str = "http://ip-api.com/json/"
             resposta = url_request(url)
+            print("DEBUG resposta:", resposta)
             data = json.loads(resposta)
             return data['city'], data['country']
         except Exception as e:
@@ -199,22 +200,77 @@ def obter_resposta(texto: str) -> str:
 
     def reposta_obter_cotacao_acao() -> str:
         simbolo = input("Digite o símbolo da ação (ex: AAPL, MSFT, TSLA): ").upper()
-        url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={simbolo}"
+        apikey = "Zq675bviMboZ3K6bRlke9TpXQl53U5fB"
+        url = f"https://financialmodelingprep.com/api/v3/quote-short/{simbolo}?apikey={apikey}"
         try:
             resposta = url_request(url)
+            if not resposta or not resposta.strip().startswith('['):
+                return "Erro ao obter cotação: Limite de requisições atingido ou resposta inválida da API."
             data = json.loads(resposta)
-            resultado = data['quoteResponse']['result']
-            if not resultado:
-                return f"Não encontrei cotação para o símbolo '{simbolo}'."
-            preco = resultado[0].get('regularMarketPrice')
-            nome = resultado[0].get('shortName', simbolo)
-            if preco is not None:
-                return f"A cotação atual de {nome} ({simbolo}) é ${preco}"
+            if data and isinstance(data, list) and 'price' in data[0]:
+                return f"A cotação atual de {simbolo} é ${data[0]['price']}"
             else:
-                return f"Não foi possível obter o preço para '{simbolo}'."
+                return f"Não foi possível obter a cotação para '{simbolo}'."
         except Exception as e:
             return f"Erro ao obter cotação: {e}"
 
+
+    def resposta_conversao_moeda() -> str:
+        
+        '''
+        Conversoa de moeda usando (exchangerate.host)
+        '''
+        moedas_disponiveis = {
+            '1': 'EUR',
+            '2': 'USD',
+            '3': 'BRL',
+            '4': 'GBP',
+            '5': 'JPY'
+        }
+
+        def mostrar_menu():
+            print('Escolha a moeda:')
+            for chave, valor in moedas_disponiveis.items():
+                print(f'{chave} - {valor}')
+            return moedas_disponiveis
+
+        def modo_conversao():
+            print('Moeda de origem:')
+            moedas = mostrar_menu()
+            op_origem = input('Digite o número da moeda de origem: ')
+            moeda_origem = moedas.get(op_origem)
+            if not moeda_origem:
+                return None
+            print('Moeda de destino:')
+            moedas = mostrar_menu()
+            op_destino = input('Digite o número da moeda de destino: ')
+            moeda_converter = moedas.get(op_destino)
+            if not moeda_converter:
+                return None
+            return (moeda_origem, moeda_converter)
+
+        def conversao(moedas, valor):
+            moeda_origem, moeda_converter = moedas
+            apikey = "41b52179a4fbb952ea8ef628aa90edf9"
+            url = f"https://api.exchangerate.host/convert?from={moeda_origem}&to={moeda_converter}&amount={valor}&access_key={apikey}"
+            resposta = url_request(url)
+            data = json.loads(resposta)
+            if data.get('success') and 'result' in data:
+                convertido = data['result']
+                taxa = data['info']['quote']
+                return (convertido, taxa)
+            else:
+                raise ValueError('Não foi possível obter a taxa de câmbio.')
+
+        def formatar(moedas, valores, resultado):
+            moeda_origem, moeda_converter = moedas
+            valor = valores[0]
+            convertido, taxa = resultado
+            return f"{valor} {moeda_origem} equivalem a {convertido:.2f} {moeda_converter} (taxa: {taxa:.4f})"
+
+        return fluxo_interativo(modo_conversao, ["Valor a converter: "], conversao, formatar)
+    
+    
     def adivinhador() -> str:
         contador = 0
         min = 1
@@ -233,6 +289,7 @@ def obter_resposta(texto: str) -> str:
 
         return f'O seu número é {min}'
     
+
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
          'como estás': 'Estou bem, obrigado!',
@@ -243,6 +300,7 @@ def obter_resposta(texto: str) -> str:
          ('converte', 'temperatura') : resposta_conversao_temperatura,
          ('peso') : resposta_conversao_peso,
          ('cotação', 'ação', 'ações', 'stock', 'preço ação'): reposta_obter_cotacao_acao,
+         ('converte', 'moeda', 'câmbio', 'cambio'): resposta_conversao_moeda,
          ('jogo', 'adivinhar') : adivinhador,
 
      }
