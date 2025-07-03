@@ -1,13 +1,30 @@
-import os
+import os, urllib.request, json
 from datetime import datetime
 
 def obter_resposta(texto: str) -> str:
 
+    def obter_localizacao_via_ip() -> dict:
+        try:
+            url: str = "http://ip-api.com/json/"
+            with urllib.request.urlopen(url) as response:
+                if response:
+                    data = json.loads(response.read().decode())
+                    return data['city'], data['country']
+                else:
+                    return f'Desculpa, não consegui obter a localização!'
+        except Exception as e:
+            return f'Desculpa, não consegui obter a localização! {e}'
+        
+    def descompactar(valor: tuple, tamanho: int, template: str) -> str:
+        if isinstance(valor, tuple) and len(valor) == tamanho:
+            return template.format(*valor)
+        return valor
+
     respostas = {
          ('olá', 'boa tarde', 'bom dia'): 'Olá tudo bem!',
          'como estás': 'Estou bem, obrigado!',
-
          ('bye', 'adeus', 'tchau'): 'Gostei de falar contigo! Até breve...',
+         ('minha localização', 'onde estou'): descompactar(obter_localizacao_via_ip(), 2, "Estás na cidade de {} em {}"),
      }
 
     comando: str = texto.lower()
@@ -17,7 +34,8 @@ def obter_resposta(texto: str) -> str:
              if comando in chave:
                  return resposta
          elif chave in comando:
-             return resposta
+            return resposta
+         
     if 'horas' in comando:
         return f'São: {datetime.now():%H:%M} horas'
     if 'data' in comando:
